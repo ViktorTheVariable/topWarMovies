@@ -2,6 +2,16 @@
 
 Welcome to U05 - TopWarMovies where all my favourite war movies are stored in a mongo database. An admin will be able to create, edit and delete movies from the database. A user will be able to view the list of movies and different types of information and attributes related to them.
 
+## Installation
+
+Download and install Node.js: https://nodejs.org/en/download/
+
+Run these terminal commands to install the dependencies:
+```bash
+npm install express mongoose
+npm install --save-dev @types/express @types/node nodemon ts-node typescript
+```
+
 ## Design - RESRTful API
 
 ### Object Model - Resources
@@ -25,7 +35,6 @@ api/v1/auth/login
     Movies: {
         "id": "ObjectId",
         "title": "String",
-        "image": "String",
         "plot": "Text",
         "releaseYear": "Number",
         "director": "String",
