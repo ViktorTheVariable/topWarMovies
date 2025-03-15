@@ -1,0 +1,25 @@
+{
+  "name": "topwarmovies",
+  "version": "1.0.0",
+  "description": "Welcome to U05 - TopWarMovies where all my favourite war movies are stored in a mongo database. An admin will be able to create, edit and delete movies from the database. A user will be able to view the list of movies and different types of information and attributes related to them.",
+  "main": "server.js",
+  "scripts": {
+    "dev": "nodemon server.ts",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc -p ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.2",
+    "mongoose": "^8.12.1"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.13.10",
+    "nodemon": "^3.1.9",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.2"
+  }
+}
