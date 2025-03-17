@@ -3,10 +3,10 @@ import { createMovie, getAllMovies, getMovieById, updateMovie, deleteMovie } fro
 
 const movieRouter = express.Router();
 
-movieRouter.get('/', getAllMovies);
-movieRouter.get('/:id', getMovieById);
-movieRouter.post('/', createMovie);
-movieRouter.put('/:id', updateMovie);
-movieRouter.delete('/:id', deleteMovie);
+movieRouter.get('/warmovies/', getAllMovies);
+movieRouter.get('/warmovies/:id', getMovieById);
+movieRouter.post('/warmovies/', createMovie);
+movieRouter.put('/warmovies/:id', updateMovie);
+movieRouter.delete('/warmovies/:id', deleteMovie);
 
 export default movieRouter;

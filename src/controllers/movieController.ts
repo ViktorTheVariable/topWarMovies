@@ -37,7 +37,7 @@ const createMovie = (req: Request, res: Response) => {
         }
     };
     movies.push(newMovie);
-    res.status(201).json({message: 'Movie updated successfully', createdMovie: newMovie});
+    res.status(201).json({message: 'Movie created successfully', createdMovie: newMovie});
 };
 
 const updateMovie = (req: Request, res: Response) => {
