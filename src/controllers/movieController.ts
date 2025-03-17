@@ -1,11 +1,11 @@
 import { IMovie, movies } from '../models/movieModel';
 import { Request, Response } from 'express';
 
-const getAllMovies = (req: Request, res: Response) => {
+const getAllMovies = (req: Request, res: Response): void => {
     res.json(movies);
 };
 
-const getMovieById = (req: Request, res: Response) => {
+const getMovieById = (req: Request, res: Response): void => {
     const movie = movies.find((m: IMovie) => m.id === parseInt(req.params.id));
     if (!movie) {
         res.status(404).json({ message: 'Movie not found' });
@@ -14,7 +14,7 @@ const getMovieById = (req: Request, res: Response) => {
     res.json(movie);
 };
 
-const createMovie = (req: Request, res: Response) => {
+const createMovie = (req: Request, res: Response): void => {
     const newMovie: IMovie = {
         id: movies.length + 1,
         title: req.body.title || '',
@@ -40,7 +40,7 @@ const createMovie = (req: Request, res: Response) => {
     res.status(201).json({message: 'Movie created successfully', createdMovie: newMovie});
 };
 
-const updateMovie = (req: Request, res: Response) => {
+const updateMovie = (req: Request, res: Response): void => {
     const movieId = parseInt(req.params.id);
     const movieIndex = movies.findIndex((m: IMovie) => m.id === movieId);
     if (movieIndex === -1) {

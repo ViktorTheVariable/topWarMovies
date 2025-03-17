@@ -5,12 +5,13 @@ import jwt from 'jsonwebtoken';
 
 
 // Joi eller express-validator kan användas senare för att validera indata
-const registerUser = async (req: any, res: any) => {
+const registerUser = async (req: Request, res: Response): Promise<void> => {
     try {
         const { username, password } = req.body;
 
         if (users.find(user => user.username === username)) {
-            return res.status(400).json({ message: 'Username already exists' });
+            res.status(400).json({ message: 'Username already exists' });
+            return;
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -32,18 +33,20 @@ const registerUser = async (req: any, res: any) => {
     }
 };
 
-const loginUser = async (req: any, res: any) => {
+const loginUser = async (req: Request, res: Response): Promise<void> => {
     try {
         const { username, password } = req.body;
 
         const user = users.find(user => user.username === username);
         if (!user) {
-            return res.status(401).json({ message: 'Invalid username or password' });
+            res.status(401).json({ message: 'Invalid username or password' });
+            return;
         }
 
         const validPassword = await bcrypt.compare(password, user.password);
         if (!validPassword) {
-            return res.status(401).json({ message: 'Invalid username or password' });
+            res.status(401).json({ message: 'Invalid username or password' });
+            return;
         }
 
         const token = jwt.sign(
@@ -59,11 +62,11 @@ const loginUser = async (req: any, res: any) => {
     }
 };
 
-const getAllUsers = (req: Request, res: Response) => {
+const getAllUsers = (req: Request, res: Response): void => {
     res.json(users);
 };
 
-const deleteUser = (req: Request, res: Response) => {
+const deleteUser = (req: Request, res: Response): void => {
     const userId = req.params.id;
     const userIndex = users.findIndex((u: IUser) => u.id === userId);
     if (userIndex === -1) {
