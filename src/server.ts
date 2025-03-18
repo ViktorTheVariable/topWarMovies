@@ -6,6 +6,17 @@ import dotenv from 'dotenv';
 import connectDB from './db';
 dotenv.config();
 
+/* 
+mongosh "mongodb+srv://clustertest.zd7tc.mongodb.net/" --apiVersion 1 --username <db_username>
+use top_war_movies
+db.users.insertOne({
+  username: "admin",
+  password: "dittStarkaLösenord",
+  isAdmin: true,
+  createdAt: new Date()
+})
+*/
+
 connectDB();
 
 const app: Express = express();
