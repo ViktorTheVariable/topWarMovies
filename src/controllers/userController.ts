@@ -1,6 +1,4 @@
-import mongoose from "mongoose";
-import { IUser } from '../models/userModel';
-import User from '../models/userModel';
+import User, { IUser } from '../models/userModel';
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
@@ -77,12 +75,16 @@ const getAllUsers = async (req: Request, res: Response): Promise<void> => {
 const deleteUser = async (req: Request, res: Response): Promise<void> => {
     try{
         const userId = req.params.id;
-        const deletedUser = await User.findByIdAndDelete(userId);
-        if (!deletedUser) {
+        const user = await User.findById(userId);
+        if (!user) {
             res.status(404).json({ message: 'User not found' });
             return;
         }
-
+        if (user.isAdmin) {
+            res.status(400).json({ message: 'Cannot delete admin user' });
+            return;
+        }
+        await user.deleteOne();
         res.json({ message: 'User deleted successfully' });
     } catch (error) {
         console.error(error);

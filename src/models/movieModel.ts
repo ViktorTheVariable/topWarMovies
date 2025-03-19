@@ -1,5 +1,7 @@
+import mongoose, { Types } from "mongoose";
+
 export interface IMovie {
-    id: number;
+    _id?: Types.ObjectId;
     title: string;
     plot: string;
     releaseYear: number;
@@ -20,11 +22,11 @@ export interface IMovie {
     };
 }
 
-export type newMovie = Omit<IMovie, 'id'>;
+// export type newMovie = Omit<IMovie, 'id'>;
 
 export let movies: IMovie[] = [
     {   
-        id: 1, 
+        _id: new mongoose.Types.ObjectId(), 
         title: "Apocalyse Now",
         plot: "One of the best and most important movies ever made.",
         releaseYear: 1979,
@@ -44,7 +46,7 @@ export let movies: IMovie[] = [
             trailerUrl: "https://www.youtube.com/watch?v=VWx6Lj4Xz3o"
         }
     },
-    {   id: 2, 
+    {   _id: new mongoose.Types.ObjectId(), 
         title: "The Thin Red Line",
         plot: "One of the most spiritual warmovies ever made.",
         releaseYear: 1998,
@@ -65,3 +67,28 @@ export let movies: IMovie[] = [
         }
     },
 ];
+
+const movieSchema = new mongoose.Schema<IMovie>({
+    title: { type: String, required: true, unique: true },
+    plot: { type: String, default: "Not specified"},
+    releaseYear: { type: Number, default: 0},
+    director: { type: String, default: "Not specified"},
+    writers: { type: [String], default: ["Not specified"]},
+    actors: { type: [String], default: ["Not specified"]},
+    length: { type: String, default: "Not specified"},
+    warType: { type: String, default: "Not specified"},
+    imdbRating: {
+        userRating: { type: Number, default: 5.0 },
+        expertRating: { type: Number, default: 5.0 }
+    },
+    language: { type: [String], default: ["Not specified"]},
+    country: { type: [String], default: ["Not specified"]},
+    media: {
+        imageUrl: { type: String, default: "Not specified"},
+        trailerUrl: { type: String, default: "Not specified"}
+    }
+}, { collection: 'movies' });
+
+const WarMovie = mongoose.model<IMovie>('WarMovie', movieSchema);
+
+export default WarMovie;

@@ -1,22 +1,34 @@
-import { IMovie, movies } from '../models/movieModel';
+import WarMovie, { IMovie } from '../models/movieModel';
 import { Request, Response } from 'express';
 
-const getAllMovies = (req: Request, res: Response): void => {
-    res.json(movies);
-};
-
-const getMovieById = (req: Request, res: Response): void => {
-    const movie = movies.find((m: IMovie) => m.id === parseInt(req.params.id));
-    if (!movie) {
-        res.status(404).json({ message: 'Movie not found' });
-        return;
+const getAllMovies = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const movies = await WarMovie.find();
+        res.json(movies);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
     }
-    res.json(movie);
 };
 
+const getMovieById = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const userId = req.params.id;
+        const movie = await WarMovie.findById(userId);
+        if (!movie) {
+            res.status(404).json({ message: 'Movie not found' });
+            return;
+        }
+        res.json(movie.toObject());
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
+/*
 const createMovie = (req: Request, res: Response): void => {
     const newMovie: IMovie = {
-        id: movies.length + 1,
         title: req.body.title || '',
         plot: req.body.plot || '',
         releaseYear: req.body.releaseYear || 0,
@@ -39,47 +51,94 @@ const createMovie = (req: Request, res: Response): void => {
     movies.push(newMovie);
     res.status(201).json({message: 'Movie created successfully', createdMovie: newMovie});
 };
+*/
 
-const updateMovie = (req: Request, res: Response): void => {
-    const movieId = parseInt(req.params.id);
-    const movieIndex = movies.findIndex((m: IMovie) => m.id === movieId);
-    if (movieIndex === -1) {
-        res.status(404).json({ message: 'Movie not found' });
-        return;
+const createMovie = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const newMovie: IMovie = await WarMovie.create({
+            title: req.body.title || '',
+            plot: req.body.plot || '',
+            releaseYear: req.body.releaseYear || 0,
+            director: req.body.director || '',
+            writers: req.body.writers || [],
+            actors: req.body.actors || [],
+            length: req.body.length || '',
+            warType: req.body.warType || '',
+            imdbRating: {
+                userRating: req.body.imdbRating?.userRating || 0,
+                expertRating: req.body.imdbRating?.expertRating || 0
+            },
+            language: req.body.language || [],
+            country: req.body.country || [],
+            media: {
+                imageUrl: req.body.media?.imageUrl || '',
+                trailerUrl: req.body.media?.trailerUrl || ''
+            }
+        });
+        res.status(201).json({message: 'Movie created successfully', createdMovie: newMovie});
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
     }
-    const updatedMovie: IMovie = {
-        ...movies[movieIndex],
-        title: req.body.title || movies[movieIndex].title,
-        plot: req.body.plot || movies[movieIndex].plot,
-        releaseYear: req.body.releaseYear || movies[movieIndex].releaseYear,
-        director: req.body.director || movies[movieIndex].director,
-        writers: req.body.writers || movies[movieIndex].writers,
-        actors: req.body.actors || movies[movieIndex].actors,
-        length: req.body.length || movies[movieIndex].length,
-        warType: req.body.warType || movies[movieIndex].warType,
-        imdbRating: {
-            userRating: req.body.imdbRating?.userRating || movies[movieIndex].imdbRating.userRating,
-            expertRating: req.body.imdbRating?.expertRating || movies[movieIndex].imdbRating.expertRating
-        },
-        language: req.body.language || movies[movieIndex].language,
-        country: req.body.country || movies[movieIndex].country,
-        media: {
-            imageUrl: req.body.media?.imageUrl || movies[movieIndex].media.imageUrl,
-            trailerUrl: req.body.media?.trailerUrl || movies[movieIndex].media.trailerUrl
-        }
-    };
-    res.json({message: 'Movie updated successfully', updatedMovie: updatedMovie});
 };
 
-const deleteMovie = (req: Request, res: Response) => {
-    const movieId = parseInt(req.params.id);
-    const movieIndex = movies.findIndex((m: IMovie) => m.id === movieId);
-    if (movieIndex === -1) {
-        res.status(404).json({ message: 'Movie not found' });
-        return;
+const updateMovie = async (req: Request, res: Response): Promise<void>=> {
+    try {
+        const movieId = req.params.id;
+        
+        const existingMovie = await WarMovie.findById(movieId);
+        if (!existingMovie) {
+            res.status(404).json({ message: 'Movie not found' });
+            return;
+        }
+        
+        const updatedMovie = await WarMovie.findByIdAndUpdate(
+            movieId,
+            {
+                title: req.body.title || existingMovie.title,
+                plot: req.body.plot || existingMovie.plot,
+                releaseYear: req.body.releaseYear || existingMovie.releaseYear,
+                director: req.body.director || existingMovie.director,
+                writers: req.body.writers || existingMovie.writers,
+                actors: req.body.actors || existingMovie.actors,
+                length: req.body.length || existingMovie.length,
+                warType: req.body.warType || existingMovie.warType,
+                imdbRating: {
+                    userRating: req.body.imdbRating?.userRating || existingMovie.imdbRating.userRating,
+                    expertRating: req.body.imdbRating?.expertRating || existingMovie.imdbRating.expertRating
+                },
+                language: req.body.language || existingMovie.language,
+                country: req.body.country || existingMovie.country,
+                media: {
+                    imageUrl: req.body.media?.imageUrl || existingMovie.media.imageUrl,
+                    trailerUrl: req.body.media?.trailerUrl || existingMovie.media.trailerUrl
+                }
+            }, { new: true }
+        ) as IMovie & Document;
+        
+        res.json({message: 'Movie updated successfully', updatedMovie: updatedMovie});
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
     }
-    movies.splice(movieIndex, 1);
-    res.json({message: 'Movie deleted successfully'});
+};
+
+const deleteMovie = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const movieId = req.params.id;
+        
+        const movie = WarMovie.findById(movieId);
+        if (!movie) {
+            res.status(404).json({ message: 'Movie not found' });
+            return;
+        }
+        await movie.deleteOne();
+        
+        res.json({message: 'Movie deleted successfully'});
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
 };
 
 export {
