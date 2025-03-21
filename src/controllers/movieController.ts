@@ -26,53 +26,26 @@ const getMovieById = async (req: Request, res: Response): Promise<void> => {
     }
 };
 
-/*
-const createMovie = (req: Request, res: Response): void => {
-    const newMovie: IMovie = {
-        title: req.body.title || '',
-        plot: req.body.plot || '',
-        releaseYear: req.body.releaseYear || 0,
-        director: req.body.director || '',
-        writers: req.body.writers || [],
-        actors: req.body.actors || [],
-        length: req.body.length || '',
-        warType: req.body.warType || '',
-        imdbRating: {
-            userRating: req.body.imdbRating?.userRating || 0,
-            expertRating: req.body.imdbRating?.expertRating || 0
-        },
-        language: req.body.language || [],
-        country: req.body.country || [],
-        media: {
-            imageUrl: req.body.media?.imageUrl || '',
-            trailerUrl: req.body.media?.trailerUrl || ''
-        }
-    };
-    movies.push(newMovie);
-    res.status(201).json({message: 'Movie created successfully', createdMovie: newMovie});
-};
-*/
-
 const createMovie = async (req: Request, res: Response): Promise<void> => {
     try {
         const newMovie: IMovie = await WarMovie.create({
-            title: req.body.title || '',
-            plot: req.body.plot || '',
-            releaseYear: req.body.releaseYear || 0,
-            director: req.body.director || '',
-            writers: req.body.writers || [],
-            actors: req.body.actors || [],
-            length: req.body.length || '',
-            warType: req.body.warType || '',
+            title: req.body.title,
+            plot: req.body.plot,
+            releaseYear: req.body.releaseYear,
+            director: req.body.director,
+            writers: req.body.writers,
+            actors: req.body.actors,
+            length: req.body.length,
+            warType: req.body.warType,
             imdbRating: {
-                userRating: req.body.imdbRating?.userRating || 0,
-                expertRating: req.body.imdbRating?.expertRating || 0
+                userRating: req.body.imdbRating?.userRating,
+                expertRating: req.body.imdbRating?.expertRating
             },
-            language: req.body.language || [],
-            country: req.body.country || [],
+            language: req.body.language,
+            country: req.body.country,
             media: {
-                imageUrl: req.body.media?.imageUrl || '',
-                trailerUrl: req.body.media?.trailerUrl || ''
+                imageUrl: req.body.media?.imageUrl,
+                trailerUrl: req.body.media?.trailerUrl
             }
         });
         res.status(201).json({message: 'Movie created successfully', createdMovie: newMovie});
@@ -127,13 +100,12 @@ const deleteMovie = async (req: Request, res: Response): Promise<void> => {
     try {
         const movieId = req.params.id;
         
-        const movie = WarMovie.findById(movieId);
+        const movie = await WarMovie.findById(movieId);
         if (!movie) {
             res.status(404).json({ message: 'Movie not found' });
             return;
         }
         await movie.deleteOne();
-        
         res.json({message: 'Movie deleted successfully'});
     } catch (error) {
         console.error(error);
