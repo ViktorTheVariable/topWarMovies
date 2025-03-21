@@ -20,7 +20,7 @@ db.users.insertOne({
 connectDB();
 
 const app: Express = express();
-const port: number = 3000;
+const port: string | number = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
