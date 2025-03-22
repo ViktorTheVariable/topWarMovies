@@ -1,4 +1,4 @@
-import { IUser, users } from '../models/userModel';
+import User, { IUser } from '../models/userModel';
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
@@ -9,7 +9,8 @@ const registerUser = async (req: Request, res: Response): Promise<void> => {
     try {
         const { username, password } = req.body;
 
-        if (users.find(user => user.username === username)) {
+        const user = await User.findOne({ username });
+        if (user) {
             res.status(400).json({ message: 'Username already exists' });
             return;
         }
@@ -17,15 +18,14 @@ const registerUser = async (req: Request, res: Response): Promise<void> => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const newUser: IUser = {
-            id: (users.length +1).toString(),
             username,
             password: hashedPassword,
             isAdmin: false,
             createdAt: new Date()
         };
-        users.push(newUser);
+        User.create(newUser);
 
-        res.status(201).json({ message: 'User registered successfully', userId: newUser.id });
+        res.status(201).json({ message: 'User registered successfully', userId: newUser._id });
         }
     catch (error) {
         console.error(error);
@@ -37,7 +37,7 @@ const loginUser = async (req: Request, res: Response): Promise<void> => {
     try {
         const { username, password } = req.body;
 
-        const user = users.find(user => user.username === username);
+        const user = await User.findOne({ username });
         if (!user) {
             res.status(401).json({ message: 'Invalid username or password' });
             return;
@@ -50,7 +50,7 @@ const loginUser = async (req: Request, res: Response): Promise<void> => {
         }
 
         const token = jwt.sign(
-            { id: user.id, isAdmin: user.isAdmin }, 
+            { id: user._id, isAdmin: user.isAdmin }, 
             process.env.JWT_SECRET as string, 
             { expiresIn: '1h' }
         );
@@ -62,19 +62,34 @@ const loginUser = async (req: Request, res: Response): Promise<void> => {
     }
 };
 
-const getAllUsers = (req: Request, res: Response): void => {
-    res.json(users);
+const getAllUsers = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const users = await User.find();
+        res.json(users);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
 };
 
-const deleteUser = (req: Request, res: Response): void => {
-    const userId = req.params.id;
-    const userIndex = users.findIndex((u: IUser) => u.id === userId);
-    if (userIndex === -1) {
-        res.status(404).json({ message: 'User not found' });
-        return;
+const deleteUser = async (req: Request, res: Response): Promise<void> => {
+    try{
+        const userId = req.params.id;
+        const user = await User.findById(userId);
+        if (!user) {
+            res.status(404).json({ message: 'User not found' });
+            return;
+        }
+        if (user.isAdmin) {
+            res.status(400).json({ message: 'Cannot delete admin user' });
+            return;
+        }
+        await user.deleteOne();
+        res.json({ message: 'User deleted successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
     }
-    users.splice(userIndex, 1);
-    res.json({ message: 'User deleted successfully' });
 };
 
 export {
