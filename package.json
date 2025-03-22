@@ -4,6 +4,7 @@
   "description": "Welcome to U05 - TopWarMovies where all my favourite war movies are stored in a mongo database. An admin will be able to create, edit and delete movies from the database. A user will be able to view the list of movies and different types of information and attributes related to them.",
   "main": "server.js",
   "scripts": {
+    "start": "node build/server.js",
     "dev": "nodemon src/server.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc -p ."
