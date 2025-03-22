@@ -8,8 +8,9 @@ Download and install Node.js: https://nodejs.org/en/download/
 
 Run these terminal commands to install the dependencies:
 ```bash
-npm install express mongoose
-npm install --save-dev @types/express @types/node nodemon ts-node typescript
+npm init -y # Create a package.json file
+npm install express mongoose # Install Express and Mongoose
+npm install --save-dev @types/express @types/node nodemon ts-node typescript # Install development dependencies for TypeScript, Node.ts, express and Nodemon
 ```
 
 ## Design - RESRTful API
@@ -25,6 +26,7 @@ api/v1/warmovies
 api/v1/warmovies/:id
 api/v1//auth/register
 api/v1/auth/login
+api/v1/users
 
 ```
 
@@ -38,8 +40,8 @@ api/v1/auth/login
         "plot": "Text",
         "releaseYear": "Number",
         "director": "String",
-        "writers": "[String]",
-        "actors": "[String]",
+        "writers": ["String"],
+        "actors": ["String"],
         "length": "Number",
         "warType": "String",
         "imdbRating": {
@@ -64,14 +66,15 @@ api/v1/auth/login
 
 ### Assigning of HTTP methods
 
-```
-GET api/v1/warmovies : Shows all warmovies
-POST api/v1/warmovies : Creates a new warmovie
-GET api/v1/warmovies/:id : Shows a specific warmovie
-PUT api/v1/warmovies/:id : Updates a specific warmovie
-DELETE api/v1/warmovies/:id : Deletes a specific warmovie
-POST api/v1//auth/register : Creates a new user
-POST api/v1/auth/login : Logs in a user/admin
+```c
+GET api/v1/warmovies  // Shows all warmovies
+POST api/v1/warmovies  // Creates a new warmovie
+GET api/v1/warmovies/:id  // Shows a specific warmovie
+PUT api/v1/warmovies/:id  // Updates a specific warmovie
+DELETE api/v1/warmovies/:id  // Deletes a specific warmovie
+GET api/v1/users  // Shows all users when logged in as admin
+POST api/v1/auth/register  // Creates a new user
+POST api/v1/auth/login  // Logs in a user/admin
 
 ```
 
