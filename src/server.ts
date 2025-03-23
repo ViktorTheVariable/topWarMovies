@@ -4,22 +4,28 @@ import movieRouter from './routes/movieRoutes';
 import userRouter from './routes/userRoutes';
 import dotenv from 'dotenv';
 import connectDB from './db';
-dotenv.config();
+import cors from 'cors';
 
-/* 
-mongosh "mongodb+srv://clustertest.zd7tc.mongodb.net/" --apiVersion 1 --username <db_username>
-use top_war_movies
-db.users.insertOne({
-  username: "admin",
-  password: "dittStarkaLösenord",
-  isAdmin: true,
-  createdAt: new Date()
-})
-*/
+dotenv.config();
 
 connectDB();
 
 const app: Express = express();
+
+const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 const port: string | number = process.env.PORT || 3000;
 
 app.use(express.json());
