@@ -22,8 +22,6 @@ export interface IMovie {
     };
 }
 
-// export type newMovie = Omit<IMovie, 'id'>;
-
 export let movies: IMovie[] = [
     {   
         _id: new mongoose.Types.ObjectId(), 
