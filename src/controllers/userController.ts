@@ -58,7 +58,7 @@ const loginUser = async (req: Request, res: Response): Promise<void> => {
         }
     catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Internal server error' });
+        res.status(500).json({ message: 'An unexpected error occurred during the login process.' });
     }
 };
 
@@ -68,7 +68,7 @@ const getAllUsers = async (req: Request, res: Response): Promise<void> => {
         res.json(users);
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Internal server error' });
+        res.status(500).json({ message: 'Failed to retrieve users due to a server error' });
     }
 };
 
@@ -88,7 +88,7 @@ const deleteUser = async (req: Request, res: Response): Promise<void> => {
         res.json({ message: 'User deleted successfully' });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Internal server error' });
+        res.status(500).json({ message: 'Failed to delete user due to a server error' });
     }
 };
 

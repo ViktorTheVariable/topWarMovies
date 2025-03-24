@@ -4,10 +4,14 @@ import { Request, Response } from 'express';
 const getAllMovies = async (req: Request, res: Response): Promise<void> => {
     try {
         const movies = await WarMovie.find();
+        if (movies.length === 0) {
+            res.status(404).json({ message: 'No movies found in the database' });
+            return;
+        }
         res.json(movies);
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Internal server error' });
+        res.status(500).json({ message: 'Failed to retrieve movies from the database' });
     }
 };
 
@@ -22,7 +26,7 @@ const getMovieById = async (req: Request, res: Response): Promise<void> => {
         res.json(movie.toObject());
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Internal server error' });
+        res.status(500).json({ message: 'Failed to retrieve movie due to a server error' });
     }
 };
 
@@ -51,7 +55,7 @@ const createMovie = async (req: Request, res: Response): Promise<void> => {
         res.status(201).json({message: 'Movie created successfully', createdMovie: newMovie});
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Internal server error' });
+        res.status(500).json({ message: 'Failed to create movie due to a server error' });
     }
 };
 
@@ -92,7 +96,7 @@ const updateMovie = async (req: Request, res: Response): Promise<void>=> {
         res.json({message: 'Movie updated successfully', updatedMovie: updatedMovie});
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Internal server error' });
+        res.status(500).json({ message: 'Failed to update movie due to a server error' });
     }
 };
 
@@ -109,7 +113,7 @@ const deleteMovie = async (req: Request, res: Response): Promise<void> => {
         res.json({message: 'Movie deleted successfully'});
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Internal server error' });
+        res.status(500).json({ message: 'Failed to delete movie due to a server error' });
     }
 };
 
