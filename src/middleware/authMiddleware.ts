@@ -1,18 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import User from '../models/userModel';
-
-interface AuthUser {
-    isAdmin: boolean;
-}
-
-interface AuthRequest extends Request {
-    user?: AuthUser;
-}
 
 interface AuthRequest extends Request {
     userId?: string;
-  }
+}
 
 export const userMiddleware = (req: AuthRequest, res: Response, next: NextFunction): void => {
     const token = req.headers.authorization?.split(' ')[1];
